@@ -32,9 +32,22 @@ Then open http://localhost:3300.
 | ![Landing page](docs/screenshots/01-landing.png) | ![Inbox](docs/screenshots/02-inbox.png) |
 | ![Knowledge base](docs/screenshots/03-knowledge.png) | ![Reports](docs/screenshots/04-reports.png) |
 | ![Automations](docs/screenshots/05-automations.png) | ![Channels and chat widget preview](docs/screenshots/06-channels.png) |
-| ![Rule editor with live test](docs/screenshots/07-rule-editor.png) | |
+| ![Rule editor with live test](docs/screenshots/07-rule-editor.png) | ![Landing: a reply replayed as you scroll](docs/screenshots/08-landing-replay.png) |
+| ![Landing: ask like a customer](docs/screenshots/09-landing-ask.png) | ![Landing: how it works](docs/screenshots/10-landing-pipeline.png) |
 
 Screenshots are taken from the running app with `npm run screenshots` (headless Chrome via puppeteer-core).
+
+## The landing page
+
+The landing page is built from the demo workspace's real data, one idea per screen:
+
+- **Hero:** the open tickets from the demo inbox, drawn onto cards floating in a three.js scene. They tilt with the pointer, and scrolling pulls Laura's ticket forward.
+- **Watch a reply get written:** a pinned, scroll-scrubbed GSAP timeline replays that ticket in an app frame: the message lands, tracking is checked, sources appear, the draft writes itself, the agent sends.
+- **Ask like a customer:** type a question and a liquid particle system settles on the matching words of the help article that answers it, using the same retrieval and grounding code as the inbox. Ask something the help centre doesn't cover and it says so.
+- **How it works:** the five pipeline steps over a drifting node network, where an incoming question periodically lights up its nearest articles.
+- **Reports and automations:** live fragments with count-ups and growing bars, then a closing line lit word by word as you scroll.
+
+Inside the app, screens enter with short staggered reveals, the sidebar highlight slides between links and new drafts write themselves in. Everything respects `prefers-reduced-motion`: the pinned replay and particle effects render their finished state instead. Both the landing page and the app work at phone width.
 
 ## How a reply gets written
 
@@ -64,6 +77,7 @@ flowchart LR
 - **Next.js 15** (App Router, server components, server actions) + **TypeScript** + **Tailwind CSS 4**
 - **PostgreSQL** with **Drizzle ORM** (`src/db/schema.ts`), or an in-memory store in demo mode
 - **OpenAI API** for drafting (chat completions, JSON mode) and embeddings
+- **GSAP** (ScrollTrigger, SplitText, `@gsap/react`) and **three.js** for the landing page and motion
 - **Vitest** for tests, **puppeteer-core** for screenshots
 
 ## Running it
@@ -139,3 +153,10 @@ public/widget.js             embeddable widget loader
 - There is no authentication; the app runs as one agent (Sara Malik) in one workspace.
 - In demo mode, changes reset when the server restarts.
 - Report history is generated, deterministic demo data; tickets you resolve in the app are added to it.
+
+## Credits
+
+- [GSAP](https://gsap.com) by GreenSock for animation, following the patterns in [greensock/gsap-skills](https://github.com/greensock/gsap-skills) (MIT).
+- The particle effect in "Ask like a customer" is adapted from ThreeUI's *Semantic Bloom*, and the node network in "How it works" from ThreeUI's *Constellation Field*: [MengTo/threeui](https://github.com/MengTo/threeui), Community edition (MIT). Only the canvas logic was ported; no remote scripts are loaded.
+- Layout and motion guidelines from [Taste Skill](https://www.tasteskill.dev/) ([Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill), MIT).
+- [three.js](https://threejs.org) (MIT) for the hero scene.

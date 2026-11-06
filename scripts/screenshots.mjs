@@ -18,15 +18,42 @@ const shots = [
   ["07-rule-editor", "/automations/r-refund-tag"],
 ];
 
+// Landing sections, captured after scrolling to them so their scroll animations have run.
+const sections = [
+  ["08-landing-replay", "#watch", 1800],
+  ["09-landing-ask", "#ask", 0, "How much is delivery to Ireland?"],
+  ["10-landing-pipeline", "#how", 0],
+];
+
 await mkdir(OUT, { recursive: true });
-const browser = await puppeteer.launch({ executablePath: CHROME, headless: true, args: ["--hide-scrollbars"] });
+// SwiftShader lets headless Chrome render the WebGL hero.
+const browser = await puppeteer.launch({ executablePath: CHROME, headless: true, args: ["--hide-scrollbars", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
 try {
   const page = await browser.newPage();
   await page.setViewport({ width: 1600, height: 1200, deviceScaleFactor: 1 });
   for (const [name, path] of shots) {
     await page.goto(BASE + path, { waitUntil: "networkidle0" });
+    await new Promise((r) => setTimeout(r, 2500)); // entrance animations
     // Let client-side drafting finish if a draft is still being written.
     await page.waitForFunction(() => !document.body.innerText.includes("Reading the order"), { timeout: 15000 }).catch(() => {});
+    await page.screenshot({ path: `${OUT}${name}.png` });
+    console.log(`saved docs/screenshots/${name}.png`);
+  }
+  for (const [name, hash, extra, question] of sections) {
+    await page.goto(BASE + "/", { waitUntil: "networkidle0" });
+    // Scroll in steps so scroll-triggered timelines play as they would for a reader.
+    const target = await page.evaluate((h) => document.querySelector(h).getBoundingClientRect().top + window.scrollY, hash);
+    for (let y = 0; y <= target + extra; y += 300) {
+      await page.evaluate((y) => window.scrollTo(0, y), y);
+      await new Promise((r) => setTimeout(r, 120));
+    }
+    await page.evaluate((y) => window.scrollTo(0, y), target + extra);
+    if (question) {
+      await page.click(`${hash} input`, { count: 3 });
+      await page.keyboard.press("Backspace");
+      await page.type(`${hash} input`, question);
+    }
+    await new Promise((r) => setTimeout(r, 3500));
     await page.screenshot({ path: `${OUT}${name}.png` });
     console.log(`saved docs/screenshots/${name}.png`);
   }
