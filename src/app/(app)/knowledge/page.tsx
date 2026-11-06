@@ -29,14 +29,14 @@ export default async function KnowledgePage() {
   return (
     <>
       <PageHeader title="Knowledge">
-        <LinkButton href="/knowledge/import">+ Add source</LinkButton>
+        <LinkButton href="/knowledge/import" className="max-sm:hidden">+ Add source</LinkButton>
         <LinkButton href="/knowledge/new" variant="primary">New article</LinkButton>
       </PageHeader>
-      <div className="space-y-5 p-8">
+      <div className="space-y-5 p-4 sm:p-8">
         <p className="-mt-1 text-[15px] text-gray-700">Drafts are written only from these sources. If something isn&apos;t covered, Helpdeck hands the ticket to an agent instead of guessing.</p>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid gap-4 md:grid-cols-3">
           {sources.map((s) => (
-            <Card key={s.title} className="flex items-center gap-3.5 px-5 py-5">
+            <Card key={s.title} className="flex min-w-0 items-center gap-3.5 px-5 py-5" data-reveal>
               <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100 text-xl" aria-hidden>{s.icon}</span>
               <div className="min-w-0 flex-1 leading-tight">
                 <p className="text-[17px] font-bold">{s.title}</p>
@@ -48,7 +48,7 @@ export default async function KnowledgePage() {
         </div>
 
         {gaps.length > 0 && (
-          <div className="flex items-center gap-4 rounded-xl border border-orange/40 bg-orange-50 px-6 py-5">
+          <div data-reveal className="flex flex-wrap items-center gap-4 rounded-xl border border-orange/40 bg-orange-50 px-6 py-5">
             <span className="text-2xl" aria-hidden>💡</span>
             <div className="min-w-0 flex-1">
               <p className="text-[16px] font-bold">{gaps.length} question{gaps.length > 1 ? "s" : ""} came up {gapTotal} time{gapTotal > 1 ? "s" : ""} this week with no article</p>
@@ -60,14 +60,14 @@ export default async function KnowledgePage() {
           </div>
         )}
 
-        <Card className="overflow-hidden">
-          <table className="w-full">
+        <Card className="overflow-x-auto" data-reveal>
+          <table className="w-full min-w-[760px]">
             <thead className="border-b border-line bg-gray-50/60">
               <tr><Th>Article</Th><Th>Category</Th><Th>Last update</Th><Th>Times cited</Th><Th>Status</Th></tr>
             </thead>
             <tbody>
               {rows.map((a) => (
-                <tr key={a.id} className="border-b border-line last:border-0 hover:bg-gray-50">
+                <tr key={a.id} data-reveal-row className="border-b border-line transition-colors last:border-0 hover:bg-gray-50">
                   <Td className="font-bold"><Link href={`/knowledge/${a.id}`} className="hover:underline">{a.title}</Link></Td>
                   <Td><Badge>{a.category}</Badge></Td>
                   <Td className="text-gray-700">{lastUpdate(a)}</Td>

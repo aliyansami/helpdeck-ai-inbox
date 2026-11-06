@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { ensureDraftAction, regenerateDraftAction, sendReplyAction } from "@/app/actions";
 import { Badge, Button, cx } from "@/components/ui";
+import { gsap, SplitText, useGSAP } from "@/lib/gsap";
 import type { ConversationStatus, Draft, Tone } from "@/lib/types";
 
 const CONFIDENCE = {
@@ -18,6 +19,22 @@ export function DraftPanel({ conversationId, draft, status }: { conversationId: 
   const [pending, start] = useTransition();
   const [error, setError] = useState<string>();
   const textarea = useRef<HTMLTextAreaElement>(null);
+  const panel = useRef<HTMLDivElement>(null);
+
+  // A fresh draft writes itself in; the panel is re-keyed on every new draft.
+  useGSAP(
+    () => {
+      if (!draft) return;
+      gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", () => {
+        const split = SplitText.create("[data-draft-body]", { type: "words" });
+        gsap.timeline()
+          .from(split.words, { autoAlpha: 0, y: 4, stagger: 0.008, duration: 0.35, ease: "power2.out" })
+          .from("[data-draft-check]", { x: -8, autoAlpha: 0, stagger: 0.06, duration: 0.35 }, "-=0.2");
+        return () => split.revert();
+      });
+    },
+    { scope: panel },
+  );
   const drafting = !draft && status === "open";
 
   useEffect(() => {
@@ -69,8 +86,8 @@ export function DraftPanel({ conversationId, draft, status }: { conversationId: 
   }
 
   return (
-    <div className={cx("overflow-hidden rounded-xl border", draft ? "border-orange/30 bg-orange-50/60" : "border-line bg-white")}>
-      <div className="flex items-center gap-3 border-b border-orange/20 px-[18px] py-3">
+    <div ref={panel} className={cx("overflow-hidden rounded-xl border", draft ? "border-orange/30 bg-orange-50/60" : "border-line bg-white")}>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 border-b border-orange/20 px-[18px] py-3">
         {draft ? (
           <>
             <p className="text-[13px] font-bold uppercase tracking-wider text-orange">AI draft</p>
@@ -113,17 +130,20 @@ export function DraftPanel({ conversationId, draft, status }: { conversationId: 
             aria-label="Reply"
           />
         ) : (
-          <p className={cx("whitespace-pre-line text-[15px] leading-[25px] text-gray-800", pending && "opacity-50")}>{draft?.body}</p>
+          <div className={cx("space-y-[25px] text-[15px] leading-[25px] text-gray-800 transition-opacity", pending && "opacity-50")}>
+            {/* One element per paragraph: SplitText would otherwise collapse the line breaks. */}
+            {draft?.body.split(/\n{2,}/).map((para, i) => <p key={i} data-draft-body className="whitespace-pre-line">{para}</p>)}
+          </div>
         )}
         {draft && draft.checks.length > 0 && !editing && (
           <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-[13px] text-gray-500">
-            {draft.checks.map((c) => <li key={c}>✓ {c}</li>)}
+            {draft.checks.map((c) => <li key={c} data-draft-check>✓ {c}</li>)}
           </ul>
         )}
         {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
       </div>
 
-      <div className="flex items-center gap-2.5 border-t border-orange/20 px-[18px] py-3">
+      <div className="flex flex-wrap items-center gap-2.5 border-t border-orange/20 px-[18px] py-3">
         <Button variant="primary" onClick={send} disabled={pending}>{pending ? "Working…" : "Send reply"}</Button>
         {draft && (
           <Button
@@ -137,7 +157,7 @@ export function DraftPanel({ conversationId, draft, status }: { conversationId: 
           </Button>
         )}
         {draft && <Button onClick={() => regenerate()} disabled={pending}>Regenerate</Button>}
-        <span className="ml-auto text-[13px] text-gray-400">⌘ + Enter to send</span>
+        <span className="ml-auto hidden text-[13px] text-gray-400 sm:inline">⌘ + Enter to send</span>
       </div>
     </div>
   );

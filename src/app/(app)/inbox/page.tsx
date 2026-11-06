@@ -44,13 +44,13 @@ export default async function InboxPage({ searchParams }: { searchParams: Promis
         </details>
       </PageHeader>
 
-      <div className="grid grid-cols-[370px_minmax(0,1fr)_290px] gap-5 p-8" style={{ height: "calc(100vh - 68px)" }}>
+      <div className="grid gap-5 p-4 sm:p-8 xl:h-[calc(100vh-68px)] xl:grid-cols-[370px_minmax(0,1fr)_290px]">
         {/* Conversation list */}
-        <Card className="flex min-h-0 flex-col overflow-hidden">
-          <div className="flex gap-2 border-b border-line p-[18px]">
+        <Card className="flex max-h-[460px] min-h-0 flex-col overflow-hidden xl:max-h-none" data-reveal>
+          <div className="flex gap-2 overflow-x-auto border-b border-line p-[18px]">
             {(["open", "waiting", "snoozed"] as const).map((v) => (
               <Link key={v} href={v === "open" ? "/inbox" : `/inbox?view=${v}`}
-                className={cx("rounded-lg border px-4 py-1.5 text-sm font-bold", view === v ? "border-navy bg-navy text-white" : "border-line bg-white text-ink hover:bg-gray-50")}>
+                className={cx("shrink-0 rounded-lg border px-4 py-1.5 text-sm font-bold transition-colors", view === v ? "border-navy bg-navy text-white" : "border-line bg-white text-ink hover:bg-gray-50")}>
                 {v[0].toUpperCase() + v.slice(1)} {counts[v]}
               </Link>
             ))}
@@ -65,8 +65,8 @@ export default async function InboxPage({ searchParams }: { searchParams: Promis
             {list.map((c) => {
               const active = c.id === selectedId;
               return (
-                <li key={c.id}>
-                  <Link href={qs({ c: c.id })} className={cx("flex gap-3 border-b border-line py-4 pl-[18px] pr-5", active ? "border-l-[3px] border-l-orange bg-orange-50 pl-[15px]" : "hover:bg-gray-50")}>
+                <li key={c.id} data-reveal-row>
+                  <Link href={qs({ c: c.id })} scroll={false} className={cx("flex gap-3 border-b border-line py-4 pl-[18px] pr-5 transition-colors", active ? "border-l-[3px] border-l-orange bg-orange-50 pl-[15px]" : "hover:bg-gray-50")}>
                     <Avatar name={c.customerName} color={c.customerColor} />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-baseline justify-between gap-2">
@@ -90,8 +90,8 @@ export default async function InboxPage({ searchParams }: { searchParams: Promis
 
         {/* Conversation */}
         {detail ? (
-          <Card className="flex min-h-0 flex-col overflow-hidden">
-            <div className="flex items-center gap-2.5 border-b border-line px-5 py-4">
+          <Card className="flex min-h-[560px] flex-col overflow-hidden xl:min-h-0" data-reveal>
+            <div className="flex flex-wrap items-center gap-2.5 border-b border-line px-5 py-4">
               <h2 className="min-w-0 truncate text-[17px] font-bold">{detail.conversation.subject}</h2>
               {detail.conversation.tags.slice(0, 1).map((t) => <Badge key={t} tone={tagTone(t)}>{t}</Badge>)}
               {detail.conversation.queue && <Badge tone="red">{detail.conversation.queue} queue</Badge>}
@@ -118,7 +118,7 @@ export default async function InboxPage({ searchParams }: { searchParams: Promis
         )}
 
         {/* Customer context */}
-        <div className="flex min-h-0 flex-col gap-4 overflow-y-auto">
+        <div className="grid min-h-0 gap-4 overflow-y-auto sm:grid-cols-2 xl:flex xl:flex-col" data-reveal>
           {detail && (
             <>
               <Card className="p-5">

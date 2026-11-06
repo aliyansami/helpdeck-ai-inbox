@@ -26,8 +26,8 @@ export default async function AutomationsPage({ searchParams }: { searchParams: 
       <PageHeader title="Automations">
         <LinkButton href="/automations/new" variant="primary">+ New rule</LinkButton>
       </PageHeader>
-      <div className="space-y-4 p-8">
-        <div className="flex gap-2">
+      <div className="space-y-4 p-4 sm:p-8">
+        <div className="flex flex-wrap gap-2">
           {tabs.map((t) => (
             <Link key={t.key} href={t.key === "all" ? "/automations" : `/automations?tab=${t.key}`}
               className={cx("rounded-lg border px-4 py-2 text-sm font-bold", tab === t.key ? "border-navy bg-navy text-white" : "border-line bg-white hover:bg-gray-50")}>
@@ -37,12 +37,12 @@ export default async function AutomationsPage({ searchParams }: { searchParams: 
         </div>
 
         {shown.map((r) => (
-          <Card key={r.id} className="flex items-start gap-4 px-6 py-5">
+          <Card key={r.id} className="flex items-start gap-4 px-5 py-5 transition-transform duration-200 hover:-translate-y-0.5 sm:px-6" data-reveal>
             <RuleToggle id={r.id} enabled={r.enabled} name={r.name} />
             <div className="min-w-0 flex-1">
-              <div className="flex items-baseline gap-3">
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                 <Link href={`/automations/${r.id}`} className="text-[17px] font-bold hover:underline">{r.name}</Link>
-                <span className="ml-auto shrink-0 text-[13px] text-gray-400">
+                <span className="text-[13px] text-gray-400 sm:ml-auto">
                   {r.enabled
                     ? `Ran ${r.runs} times${r.lastRunAt ? ` · last ${relativeLong(r.lastRunAt)}` : ""}`
                     : `Paused${r.pausedBy ? ` by ${r.pausedBy}` : ""}${r.pausedAt ? ` · ${shortDate(r.pausedAt)}` : ""}`}
@@ -58,7 +58,7 @@ export default async function AutomationsPage({ searchParams }: { searchParams: 
         ))}
         {shown.length === 0 && <Card className="p-8 text-center text-sm text-muted">No rules here.</Card>}
 
-        <Card className="flex items-center gap-3 px-6 py-5">
+        <Card className="flex flex-wrap items-center gap-3 px-6 py-5" data-reveal>
           <span aria-hidden className="text-lg">🛡️</span>
           <p className="flex-1 text-[15px] text-gray-700">
             <strong className="text-ink">Guardrail:</strong>{" "}
@@ -67,15 +67,15 @@ export default async function AutomationsPage({ searchParams }: { searchParams: 
           <GuardrailsButton guardrails={g} />
         </Card>
 
-        <Card className="overflow-hidden">
+        <Card className="overflow-x-auto" data-reveal>
           <p className="px-6 pb-3 pt-5 text-[17px] font-bold">Recent activity</p>
-          <table className="w-full">
+          <table className="w-full min-w-[640px]">
             <thead className="border-y border-line bg-gray-50/60">
               <tr><Th className="w-28">Time</Th><Th>Rule</Th><Th>Ticket</Th><Th>Result</Th></tr>
             </thead>
             <tbody>
               {activity.map((a) => (
-                <tr key={a.id} className="border-b border-line last:border-0">
+                <tr key={a.id} data-reveal-row className="border-b border-line last:border-0">
                   <Td className="text-gray-700">{clock(a.at)}</Td>
                   <Td className="font-bold">{a.ruleName}</Td>
                   <Td className="text-gray-700">{a.ticket}</Td>

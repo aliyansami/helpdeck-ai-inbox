@@ -28,12 +28,12 @@ export default async function ChannelsPage() {
   return (
     <>
       <PageHeader title="Channels" />
-      <div className="grid grid-cols-[minmax(0,1fr)_380px] gap-6 p-8">
+      <div className="grid gap-6 p-4 sm:p-8 xl:grid-cols-[minmax(0,1fr)_380px]">
         <div>
           <p className="-mt-1 text-[15px] text-gray-700">Every message from these channels lands in one inbox, with the customer&apos;s orders next to it.</p>
-          <div className="mt-4 grid grid-cols-2 gap-4">
+          <div className="mt-4 grid gap-4 md:grid-cols-2">
             {channels.map((c) => (
-              <Card key={c.title} className="flex min-h-[232px] flex-col px-6 py-5">
+              <Card key={c.title} className="flex min-h-[232px] flex-col px-6 py-5 transition-transform duration-200 hover:-translate-y-0.5" data-reveal>
                 <div className="flex items-start justify-between">
                   <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100 text-xl" aria-hidden>{c.icon}</span>
                   {c.connected ? <Badge tone="green">Connected</Badge> : <Badge>Not connected</Badge>}
@@ -55,7 +55,7 @@ export default async function ChannelsPage() {
           </div>
         </div>
 
-        <div className="space-y-0">
+        <div className="space-y-0" data-reveal>
           <WidgetPreview settings={workspace.widget} preview={{ question: PREVIEW_QUESTION, ...preview }} />
           <Card className="mt-[-1px] rounded-t-none border-t-0 px-[22px] py-5">
             <p className="text-[17px] font-bold">Business hours</p>

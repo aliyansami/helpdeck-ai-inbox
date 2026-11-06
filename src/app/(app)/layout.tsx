@@ -13,7 +13,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const mode = modeLabel();
   const modeText = mode === "Demo" ? "Demo mode · mock drafts" : mode === "Live" ? "Live · OpenAI + Postgres" : mode;
   return (
-    <div className="flex min-h-screen bg-grey">
+    <div className="flex min-h-screen flex-col bg-grey lg:flex-row">
       <Suspense>
         <Sidebar counts={counts} agent={agent} mode={modeText} />
       </Suspense>
