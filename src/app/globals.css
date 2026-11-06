@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy: #14213d;
+  --color-navy-700: #1e2d4f;
+  --color-navy-600: #2a3a5e;
+  --color-orange: #f26b3a;
+  --color-orange-600: #e05a2a;
+  --color-orange-50: #fff4ef;
+  --color-grey: #f3f4f6;
+  --color-ink: #111827;
+  --color-muted: #6b7280;
+  --color-line: #e5e7eb;
+  --font-sans: "Helvetica Neue", -apple-system, BlinkMacSystemFont, Inter, "Segoe UI", Arial, sans-serif;
+}
+
+body {
+  background: #ffffff;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-orange);
+  outline-offset: 2px;
+}
