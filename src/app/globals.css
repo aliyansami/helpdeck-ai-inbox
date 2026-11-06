@@ -25,3 +25,34 @@ body {
   outline: 2px solid var(--color-orange);
   outline-offset: 2px;
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+.link-draw {
+  background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 1px;
+  transition: background-size 0.3s ease, color 0.2s ease;
+}
+.link-draw:hover {
+  background-size: 100% 1px;
+}
+
+/* A marker sweep, used when a cited source is revealed. */
+.mark-sweep {
+  background: linear-gradient(#ffe2d4, #ffe2d4) no-repeat 0 50% / 0% 100%;
+  border-radius: 3px;
+}
+
+@keyframes scrollcue {
+  0%, 100% { transform: scaleY(0.2); opacity: 0.3; }
+  50% { transform: scaleY(1); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

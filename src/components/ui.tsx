@@ -59,7 +59,7 @@ const BUTTON: Record<ButtonVariant, string> = {
 
 export function buttonClass(variant: ButtonVariant = "secondary", size: "sm" | "md" = "md") {
   return cx(
-    "inline-flex items-center justify-center gap-1.5 rounded-lg font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-50",
+    "inline-flex shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg font-bold transition-[transform,background-color,box-shadow] duration-200 hover:-translate-y-px active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0",
     size === "md" ? "h-10 px-4 text-sm" : "h-8 px-3 text-[13px]",
     BUTTON[variant],
   );
